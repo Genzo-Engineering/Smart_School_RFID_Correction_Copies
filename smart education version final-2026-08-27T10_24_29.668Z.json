@@ -1,0 +1,2393 @@
+[
+  {
+    "name": "smart education version final",
+    "variables": {},
+    "secrets": {},
+    "nodes": [
+      {
+        "id": "266ccbe4-ea94-41a0-8ff4-7e625b37831c",
+        "position": {
+          "x": -574.9132596920331,
+          "y": 241.15193970394097
+        },
+        "type": "trigger",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "mqtt-trigger",
+          "label": "MQTTTrigger",
+          "inputs": {},
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Triggers when messages arrive on MQTT topics",
+          "showRunningStatus": true,
+          "parameters": {
+            "protocol": "mqtt",
+            "qos": "0",
+            "host": "broker.hivemq.com",
+            "port": 1883,
+            "topics": [
+              "smart-hospital-monitor/MakerBoard_01"
+            ],
+            "clientId": "fusion-mqtt-subscriber_salahkh"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "f9770fee-2856-4588-b9a9-d6938d08f1ee",
+        "position": {
+          "x": -378.33613299694485,
+          "y": 231.09078673710755
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Select",
+            "selectParams": {
+              "returnAll": "false",
+              "limit": 1,
+              "where": [
+                {
+                  "operator": "eq",
+                  "field": "rfid_uid",
+                  "value": {
+                    "$expr": "output",
+                    "node": "MQTTTrigger",
+                    "outputId": "success",
+                    "path": "message.rfid_uid"
+                  }
+                }
+              ],
+              "columns": []
+            },
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "students"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "70854288-3d50-4c02-b485-abcb35930269",
+        "position": {
+          "x": 213.09559909417285,
+          "y": 216.08067573281187
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action1",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Insert",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "attendance_events",
+            "insertParams": {
+              "rows": {
+                "student_id": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "student_id"
+                },
+                "rfid_uid": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "rfid_uid"
+                },
+                "event_type": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "event_type"
+                },
+                "scanned_at": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "scanned_at"
+                },
+                "raw_payload": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "raw_payload"
+                }
+              }
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "b3699260-1b6c-4441-a3b7-78d619d2eef8",
+        "position": {
+          "x": 433.75551523523336,
+          "y": 210.0526623890208
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action2",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Insert or Update",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "attendance",
+            "insertOrUpdateParams": {
+              "conflictColumns": [
+                "student_id",
+                "attendance_date"
+              ],
+              "rows": {
+                "student_id": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "student_id"
+                },
+                "attendance_date": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "attendance_date"
+                },
+                "status": "present",
+                "source": "rfid",
+                "seen_at": {
+                  "$expr": "output",
+                  "node": "Function",
+                  "outputId": "success",
+                  "path": "scanned_at"
+                }
+              }
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "9d530619-8ef6-496e-97f3-33e5423444fa",
+        "position": {
+          "x": 10.146860675221234,
+          "y": 220.71122165200615
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const mqttData = outputs.MQTTTrigger.success.message;\nconst student = outputs[\"Postgres Action\"].success.rows[0];\n\nif (!student) {\n  throw new Error(\"RFID inconnu : \" + mqttData.rfid_uid);\n}\n\n// Heure/date correctes pour le Maroc (Africa/Casablanca), au lieu de l'UTC brut\n// qui affichait toujours 1h de moins.\nfunction moroccoNow() {\n  const OFFSET_HOURS = 1; // Maroc = UTC+1 en permanence (sauf periode Ramadan = UTC+0)\n  const local = new Date(Date.now() + OFFSET_HOURS * 60 * 60 * 1000);\n  const pad = (n) => String(n).padStart(2, \"0\");\n  const date = `${local.getUTCFullYear()}-${pad(local.getUTCMonth() + 1)}-${pad(local.getUTCDate())}`;\n  const datetime = `${date}T${pad(local.getUTCHours())}:${pad(local.getUTCMinutes())}:${pad(local.getUTCSeconds())}+01:00`;\n  return { date, datetime };\n}\nconst now = moroccoNow();\n\n// Bloquer un 2e (ou 3e...) scan le meme jour pour le meme etudiant\nconst todaysAttendance = (outputs[\"Postgres Action5\"] && outputs[\"Postgres Action5\"].success.rows) || [];\nconst alreadyCheckedIn = todaysAttendance.some(\n  (r) => String(r.student_id) === String(student.id)\n);\nif (alreadyCheckedIn) {\n  throw new Error(`Etudiant ${student.id} deja enregistre aujourd'hui (${now.date})`);\n}\n\nreturn {\n  student_id: String(student.id),\n  rfid_uid: String(mqttData.rfid_uid),\n  event_type: \"check_in\",\n  scanned_at: now.datetime,\n  attendance_date: now.date,\n  raw_payload: mqttData\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "d002cedc-09fa-4f78-bfe3-0e50bb105afb",
+        "position": {
+          "x": -168.18614212018898,
+          "y": 227.09350292131606
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action5",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Execute SQL query",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "attendance",
+            "executeQueryParams": {
+              "query": "SELECT student_id FROM attendance WHERE attendance_date = CURRENT_DATE;",
+              "acknowledgeRisk": true
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "mu4t08xf4suwy9pf8ek0caih",
+        "position": {
+          "x": 447.9812423988336,
+          "y": 577.0588161480974
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action4",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Insert",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "alerts",
+            "insertParams": {
+              "rows": {
+                "student_id": {
+                  "$expr": "output",
+                  "node": "Function2",
+                  "outputId": "success",
+                  "path": "student_id"
+                },
+                "alert_type": {
+                  "$expr": "output",
+                  "node": "Function2",
+                  "outputId": "success",
+                  "path": "alert_type"
+                },
+                "alert_date": {
+                  "$expr": "output",
+                  "node": "Function2",
+                  "outputId": "success",
+                  "path": "alert_date"
+                },
+                "message": {
+                  "$expr": "output",
+                  "node": "Function2",
+                  "outputId": "success",
+                  "path": "message"
+                },
+                "status": {
+                  "$expr": "output",
+                  "node": "Function2",
+                  "outputId": "success",
+                  "path": "status"
+                }
+              },
+              "skipOnConflict": false
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "xjg9i9mmma6677qv6bwjdxv2",
+        "position": {
+          "x": -570.5118268167212,
+          "y": 799.7691484511307
+        },
+        "type": "trigger",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "cron",
+          "label": "Cron",
+          "inputs": {},
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Triggers workflow on a cron schedule.",
+          "showRunningStatus": true,
+          "parameters": {
+            "schedule": "31 8 * * 1-5"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "xex0ze3ln6yqhg6cbj3xdl12",
+        "position": {
+          "x": 28.646853624598435,
+          "y": 800.2070779698768
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action3",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Execute SQL query",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "attendance",
+            "executeQueryParams": {
+              "query": "SELECT   a.student_id,   s.student_code,   s.first_name,   s.last_name,   a.attendance_date,   a.status FROM attendance a JOIN students s ON s.id = a.student_id WHERE a.status = 'absent'   AND a.attendance_date = CURRENT_DATE;",
+              "acknowledgeRisk": true
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "eemt50wgawtehz8d1m2fqxqj",
+        "position": {
+          "x": 7.676421368186752,
+          "y": 441.21199162152857
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action6",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Execute SQL query",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "attendance",
+            "executeQueryParams": {
+              "query": "SELECT   (SELECT COUNT(*) FROM students) AS total_students,   (SELECT COUNT(*) FROM attendance WHERE attendance_date = CURRENT_DATE AND status = 'present') AS presents,   (SELECT COUNT(*) FROM attendance WHERE attendance_date = CURRENT_DATE AND status = 'absent') AS absents;",
+              "acknowledgeRisk": true
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "nwvpy8z1vssekm5wk4qsz8dr",
+        "position": {
+          "x": 256.4883194367868,
+          "y": 864.127100903618
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function1",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "try {\n  const result = outputs[\"Postgres Action3\"].success;\n  const rows = result.rows || [];\n\n  if (rows.length === 0) {\n    return {\n      success: true,\n      should_notify: false,\n      alerts_count: 0,\n      alertsData: [],\n      alertsRows: [],\n      subject: \"\",\n      message: \"\",\n      error: \"\"\n    };\n  }\n\n  const date = new Date().toISOString().split(\"T\")[0];\n\n  const lines = rows.map((student, index) => {\n    return `${index + 1}. ${student.first_name} ${student.last_name} (${student.student_code})`;\n  });\n\n  const message =\n    `Bonjour,\\n\\n` +\n    `Voici la liste des étudiants absents le ${date} :\\n\\n` +\n    lines.join(\"\\n\") +\n    `\\n\\nNombre total d'étudiants absents : ${rows.length}`;\n\n  const alertsRows = rows.map(student => ({\n    student_id: student.student_id,\n    alert_type: \"absence\",\n    alert_date: date,\n    message: `Absence détectée : ${student.first_name} ${student.last_name} (${student.student_code})`,\n    status: \"pending\"\n  }));\n\n  return {\n    success: true,\n    should_notify: true,\n    alerts_count: rows.length,\n    alertsData: rows,\n    alertsRows: alertsRows,\n    subject: `Absences - ${date}`,\n    message: message,\n    error: \"\"\n  };\n\n} catch (e) {\n  return {\n    success: false,\n    should_notify: false,\n    alerts_count: 0,\n    alertsData: [],\n    alertsRows: [],\n    subject: \"\",\n    message: \"\",\n    error: String(e)\n  };\n}"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "ncs1rco4k7o862ugw2r1zccw",
+        "position": {
+          "x": 229.58565213591385,
+          "y": 598.9367992990608
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function2",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const pg = outputs[\"Postgres Action3\"].success;\nconst rows = pg.rows || [];\n\nif (rows.length === 0) {\n  // Rien à insérer : on sort par la branche \"error\" (non connectée à Postgres Action4)\n  // pour ne pas créer d'alerte vide quand il n'y a aucun absent.\n  throw new Error(\"Aucun élève absent aujourd'hui - rien à insérer dans alerts\");\n}\n\ntry {\n  const alertRows = rows.map(student => ({\n    student_id: student.student_id,\n    alert_type: \"absence\",\n    alert_date: new Date().toISOString().split(\"T\")[0],\n    message: `Absence détectée : ${student.first_name} ${student.last_name} (${student.student_code})`,\n    status: \"open\"\n  }));\n\n  const first = alertRows[0];\n\n  return {\n    success: true,\n    rows: alertRows,\n    count: alertRows.length,\n    student_id: first.student_id,\n    alert_type: first.alert_type,\n    alert_date: first.alert_date,\n    message: first.message,\n    status: first.status\n  };\n} catch (e) {\n  throw e;\n}"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "r881u8i96btjs8zn5u0v5pjj",
+        "position": {
+          "x": 214.74632771601128,
+          "y": 432.75528706214624
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function3",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "try {\n  const counts = outputs[\"Postgres Action6\"].success.rows[0];\n\n  const total = Number(counts.total_students) || 0;\n  const presents = Number(counts.presents) || 0;\n  const absents = Number(counts.absents) || 0;\n  const rate = total > 0 ? Math.round((presents / total) * 1000) / 10 : 0;\n\n  const date = new Date().toISOString().split(\"T\")[0];\n\n  return {\n    success: true,\n    payload: {\n      date: date,\n      total_students: total,\n      presents: presents,\n      absents: absents,\n      presence_rate: rate,\n      alerts_sent: absents\n    },\n    rows: [[date, total, presents, absents, rate, absents]]\n  };\n} catch (e) {\n  return { success: false, error: String(e) };\n}"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "uz8kqd2coui2m4cy69qteott",
+        "position": {
+          "x": -573.5731789739202,
+          "y": 555.5774200217179
+        },
+        "type": "trigger",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "manual-trigger",
+          "label": "Manual Trigger",
+          "inputs": {},
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Triggers the workflow manually.",
+          "showRunningStatus": false,
+          "parameters": {},
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "lejax2jwokqrno6h9u0sg4lx",
+        "position": {
+          "x": 450.69323449981573,
+          "y": 412.3077842343604
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "google-sheets-values",
+          "label": "Google Sheets - Values",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Value operations for Google Sheets (append/update/get)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "append",
+            "clientId": {
+              "$expr": "secret",
+              "path": "clientIdma"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "clientSecretma"
+            },
+            "accessToken": {
+              "$expr": "secret",
+              "path": "accessTokenma"
+            },
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "refreshTokenma"
+            },
+            "spreadsheetId": {
+              "$expr": "secret",
+              "path": "spreadsheetId"
+            },
+            "range": "Feuille 1!A:F",
+            "values": {
+              "$expr": "output",
+              "node": "Function3",
+              "outputId": "success",
+              "path": "rows"
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "f1syjmxpr3ns0a0uus83gu7m",
+        "position": {
+          "x": -256.1028063593176,
+          "y": 639.9297021342109
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action7",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Execute SQL query",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "attendance",
+            "executeQueryParams": {
+              "query": "INSERT INTO attendance (student_id, attendance_date, status, source) SELECT s.id, CURRENT_DATE, 'absent', 'auto' FROM students s WHERE NOT EXISTS (  SELECT 1 FROM attendance a   WHERE a.student_id = s.id AND a.attendance_date = CURRENT_DATE) ON CONFLICT (student_id, attendance_date) DO NOTHING;",
+              "acknowledgeRisk": true
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "bjizh6e2lxebbpbjywpd7fit",
+        "position": {
+          "x": 451.7284680320051,
+          "y": 736.8473813305137
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "gmail",
+          "label": "Gmail1",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Consolidated Gmail operations (send/get/trash/delete/move/markRead/markUnread/createLabel/listLabels)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "send",
+            "bodyType": "text",
+            "to": [
+              "genaiotcasa@gmail.com"
+            ],
+            "subject": {
+              "$expr": "output",
+              "node": "Function1",
+              "outputId": "success",
+              "path": "subject"
+            },
+            "text": {
+              "$expr": "output",
+              "node": "Function1",
+              "outputId": "success",
+              "path": "message"
+            },
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "Refresh Token1//04"
+            },
+            "clientId": {
+              "$expr": "secret",
+              "path": "Client ID87"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "Client SecretGOC"
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "swq9k5937qrr4wq03erzmfsx",
+        "position": {
+          "x": 447.55132349079884,
+          "y": 894.5524609066156
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "slack-action",
+          "label": "Slack Action1",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Perform Slack operations",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "message",
+            "token": {
+              "$expr": "secret",
+              "path": "tokenslack"
+            },
+            "messageOperation": "send",
+            "text": {
+              "$expr": "output",
+              "node": "Function1",
+              "outputId": "success",
+              "path": "message"
+            },
+            "messageChannelId": "C0BLA0JSPPU"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "minky4xtyo5eb85y5s94gmra",
+        "position": {
+          "x": -864.804275545624,
+          "y": 1223.2750901812951
+        },
+        "type": "trigger",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "google-drive-trigger",
+          "label": "Google Drive - New File Trigger",
+          "inputs": {},
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Polls Google Drive for new files and emits them.",
+          "showRunningStatus": true,
+          "parameters": {
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "refreshTokenma"
+            },
+            "clientId": {
+              "$expr": "secret",
+              "path": "clientIdma"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "clientSecretma"
+            },
+            "folderId": {
+              "$expr": "secret",
+              "path": "folderId"
+            },
+            "intervalMs": 60000,
+            "emitOnStart": true,
+            "pageSize": 10
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "st109xg1bzdc0vwz8qnx5ia9",
+        "position": {
+          "x": -215.50237406020187,
+          "y": 1166.12115314967
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "mistral-doc",
+          "label": "Mistral OCR Copie",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "OCR, Layout Annotations, and Q&A for PDFs and Images via Mistral.",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "document_qna",
+            "inputType": "base64",
+            "apiKey": {
+              "$expr": "secret",
+              "path": "apiKeymistral"
+            },
+            "documentFormat": "jpeg",
+            "documentBase64": {
+              "$expr": "output",
+              "node": "Function6",
+              "outputId": "success",
+              "path": "file"
+            },
+            "question": "Extrais tout le texte visible dans ce document. Respecte autant que possible la structure, les questions, les réponses, les nombres et les symboles mathématiques. Ne corrige pas les réponses de l'étudiant."
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "t14egdpujm6q38z44bgk37ph",
+        "position": {
+          "x": -210.33779059691523,
+          "y": 1290.280730603504
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "mistral-doc",
+          "label": "Mistral OCR Corrigé",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "OCR, Layout Annotations, and Q&A for PDFs and Images via Mistral.",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "document_qna",
+            "inputType": "base64",
+            "apiKey": {
+              "$expr": "secret",
+              "path": "apiKeymistral"
+            },
+            "documentFormat": "jpeg",
+            "documentBase64": {
+              "$expr": "output",
+              "node": "Function7",
+              "outputId": "success",
+              "path": "file"
+            },
+            "question": "Extrais tout le texte visible dans ce document. Respecte autant que possible la structure, les questions, les réponses, les nombres et les symboles mathématiques. Ne corrige pas les réponses de l'étudiant."
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "fm3ydylikkmaj0og6gc5qkdg",
+        "position": {
+          "x": -358.25405476563986,
+          "y": 935.7169036167728
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function6",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const data = input;\n\nif (!data.base64) {\n  throw new Error(\"Base64 introuvable\");\n}\n\nreturn {\n  file: String(data.base64),\n  mimeType: \"image/jpeg\",\n  size: Number(data.size || 0)\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "pydvavx2n37gpudhan6e9tyf",
+        "position": {
+          "x": -347.57488720414636,
+          "y": 1473.1699468978238
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function7",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const data = input;\n\nif (!data.base64) {\n  throw new Error(\"Base64 introuvable\");\n}\n\nreturn {\n  file: String(data.base64),\n  mimeType: String(data.mimeType || \"image/png\"),\n  size: Number(data.size || 0)\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "hptf7x8svt0ty5oetz4njz6c",
+        "position": {
+          "x": -63.56237912284621,
+          "y": 1026.2603042422465
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function8",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "return {\n\n  copie: input.answer\n\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "jsfcc6th7073vbqbjozj9jlm",
+        "position": {
+          "x": -39.65575297100409,
+          "y": 1364.7033428163525
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function9",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "return {\n  corrige: input.answer\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "wrppnq8sxio7oeivhxue2s70",
+        "position": {
+          "x": 206.379224439264,
+          "y": 1369.3747693782423
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function10",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "return input;"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "c8wd4pk4y21hdqko95xyr12f",
+        "position": {
+          "x": 426.0224525502928,
+          "y": 1346.5516289906677
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function11",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const raw = outputs.Agent.success || \"\";\n\nconst match = raw.match(/\\{[\\s\\S]*\\}\\s*$/);\n\nif (!match) {\n  throw new Error(\"JSON introuvable\");\n}\n\nconst data = JSON.parse(match[0]);\n\nreturn {\n  nom: data.nom || \"\",\n  prenom: data.prenom || \"\",\n  note: Number(data.note || 0),\n  note_max: Number(data.note_max || 0),\n  pourcentage: Number(data.pourcentage || 0),\n  erreurs: data.erreurs || \"\",\n  appreciation: data.appreciation || \"\",\n  correction_complete: data.correction_complete || \"\"\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "z0yuk1qjors4jmv7k5lr3png",
+        "position": {
+          "x": 535.1402535851612,
+          "y": 1081.72046916592
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function12",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const data = input;\n\nreturn {\n  titre: `Correction - ${data.nom} ${data.prenom}`,\n\n  contenu: `RAPPORT DE CORRECTION\n\nNom : ${data.nom}\nPrénom : ${data.prenom}\n\nNote : ${data.note}/${data.note_max}\nPourcentage : ${data.pourcentage}%\n\nRÉSUMÉ DES ERREURS\n\n${data.erreurs}\n\nAPPRÉCIATION GÉNÉRALE\n\n${data.appreciation}\n\nCORRECTION DÉTAILLÉE\n\n${data.correction_complete}`\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "j5bq0dpeam0d5d6ynbkmsj6s",
+        "position": {
+          "x": 799.1035887980089,
+          "y": 1077.5180475697437
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function13",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const contenu = outputs.Function12.success.contenu;\nconst documentId = input.documentId;\n\nconst batchUpdateRequests = [\n  {\n    insertText: {\n      endOfSegmentLocation: {},\n      text: contenu\n    }\n  }\n];\n\nreturn {\n  documentId: documentId,\n  batchUpdateRequests: JSON.stringify(batchUpdateRequests)\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "zo6rhlxnphk7ssqvucwgw02y",
+        "position": {
+          "x": -629.0515587589639,
+          "y": 1130.2007128758914
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function4",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "return {\n  fileId: \"1MN7I0U8NZervFCHuDCjkZLKXMIiwOYsu\",\n  fileName: \"copie_eleve\",\n  mimeType: \"image/jpeg\"\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "lbfc6bi3dzzcxfg94abe6zp8",
+        "position": {
+          "x": -626.5782283811614,
+          "y": 1337.9340166539168
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function5",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "return {\n  fileId: \"17WRqRWCg_GuTYoFBoN2APIpTGyVlvHwY\"\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "aajylq1rmg54rl6s1zcrx5sa",
+        "position": {
+          "x": -487.300743402006,
+          "y": 1129.6445744992277
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "google-drive-file",
+          "label": "Google Drive - File",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "File operations for Google Drive (upload/download/delete/update)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "download",
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "refreshTokenma"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "clientSecretma"
+            },
+            "clientId": {
+              "$expr": "secret",
+              "path": "clientIdma"
+            },
+            "fileId": {
+              "$expr": "output",
+              "node": "Function4",
+              "outputId": "success",
+              "path": "fileId"
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "uha9h259kejg3vkh1mfi367t",
+        "position": {
+          "x": -474.96449696089417,
+          "y": 1340.0004173971986
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "google-drive-file",
+          "label": "Google Drive - File1",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "File operations for Google Drive (upload/download/delete/update)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "download",
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "refreshTokenma"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "clientSecretma"
+            },
+            "clientId": {
+              "$expr": "secret",
+              "path": "clientIdma"
+            },
+            "fileId": {
+              "$expr": "output",
+              "node": "Function5",
+              "outputId": "success",
+              "path": "fileId"
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "c3bk0yhc1zgqfogurkhqk6f0",
+        "position": {
+          "x": 313.7429485202378,
+          "y": 1363.8249249931705
+        },
+        "type": "agent-llm",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "groq-llm",
+          "label": "Groq LLM",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "A node that uses Groq's ultra-fast LLM inference.",
+          "showRunningStatus": true,
+          "parameters": {
+            "apiKey": {
+              "$expr": "secret",
+              "path": "apiKeygroq"
+            },
+            "model": "openai/gpt-oss-120b"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "ol7l5oqtg5jzt2b25mydtrwb",
+        "position": {
+          "x": 93.85385211361711,
+          "y": 1215.9917379899175
+        },
+        "type": "utility",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "merge",
+          "label": "Merge",
+          "inputs": {
+            "input1": {
+              "label": "Input1"
+            },
+            "input2": {
+              "label": "Input2"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Merges multiple inputs using zip or combineLatest strategy.",
+          "showRunningStatus": false,
+          "parameters": {
+            "strategy": "zip",
+            "mergeMode": "allCombinations",
+            "clashStrategy": "preferInput1"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "gm7aj3csiqrkou0qw46c3bmk",
+        "position": {
+          "x": 646.0159081472339,
+          "y": 1417.079823275151
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "postgres-action",
+          "label": "Postgres Action8",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Execute PostgreSQL operations (select, insert, update, delete)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "Insert",
+            "host": "aws-1-eu-west-1.pooler.supabase.com",
+            "port": 6543,
+            "user": "postgres.fpapepkpwatchnjpqsfe",
+            "password": {
+              "$expr": "secret",
+              "path": "passworddatabase"
+            },
+            "database": "postgres",
+            "tableName": "corrections_examens",
+            "insertParams": {
+              "rows": {
+                "nom": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "nom"
+                },
+                "note": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "note"
+                },
+                "note_max": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "note_max"
+                },
+                "pourcentage": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "pourcentage"
+                },
+                "erreurs": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "erreurs"
+                },
+                "appreciation": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "appreciation"
+                },
+                "correction_complete": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "correction_complete"
+                },
+                "prenom": {
+                  "$expr": "output",
+                  "node": "Function11",
+                  "outputId": "success",
+                  "path": "prenom"
+                }
+              }
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "bco8i8257is66quvjm69379h",
+        "position": {
+          "x": 660.3904121629802,
+          "y": 1081.6060934711786
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "google-docs",
+          "label": "Google Docs",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Create, read, and update Google Docs documents. Manage document content and formatting.",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "createDocument",
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "refreshTokenma"
+            },
+            "accessToken": {
+              "$expr": "secret",
+              "path": "accessTokenma"
+            },
+            "clientId": {
+              "$expr": "secret",
+              "path": "clientIdma"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "clientSecretma"
+            },
+            "documentTitle": {
+              "$expr": "output",
+              "node": "Function12",
+              "outputId": "success",
+              "path": "titre"
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "stjgtessk2gj1xxcvigkjdov",
+        "position": {
+          "x": 925.705606720844,
+          "y": 1076.2361142902644
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "google-docs",
+          "label": "Google Docs1",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Create, read, and update Google Docs documents. Manage document content and formatting.",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "batchUpdateDocument",
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "refreshTokenma"
+            },
+            "accessToken": {
+              "$expr": "secret",
+              "path": "accessTokenma"
+            },
+            "clientId": {
+              "$expr": "secret",
+              "path": "clientIdma"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "clientSecretma"
+            },
+            "documentId": {
+              "$expr": "output",
+              "node": "Google Docs",
+              "outputId": "success",
+              "path": "documentId"
+            },
+            "batchUpdateRequests": "[   {     \"insertText\": {       \"endOfSegmentLocation\": {},       \"text\": \"RAPPORT DE CORRECTION\\n\\nNom : Sara\\nPrénom : Amine\\n\\nNote : 18/20\\nPourcentage : 90%\\n\\nRésumé des erreurs :\\nExercice 1, question 2 : 8 × 7 = 54 au lieu de 56.\\n\\nAppréciation générale :\\nTravail global très satisfaisant, avec une petite erreur de calcul.\"     }   } ]"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "r16ec8r0cysndv10p5xkp34i",
+        "position": {
+          "x": 258.12185691648693,
+          "y": 1094.2720680842401
+        },
+        "type": "agent",
+        "width": 96,
+        "height": 96,
+        "data": {
+          "name": "agent",
+          "label": "Agent",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "An AI agent that can perform tasks using nodes as tools based on user input.",
+          "showRunningStatus": true,
+          "parameters": {
+            "systemPrompt": "Tu es un correcteur d'examen professionnel.\n\nVoici la copie de l'étudiant :\n{{copie}}\n\nVoici le corrigé de référence :\n{{corrige}}\n\nCompare la copie de l'étudiant au corrigé de référence et évalue-la. Réponds UNIQUEMENT avec un objet JSON strictement dans ce format, sans aucun texte avant ou après :\n{\n  \"nom\": \"...\",\n  \"prenom\": \"...\",\n  \"note\": 0,\n  \"note_max\": 20,\n  \"pourcentage\": 0,\n  \"erreurs\": \"...\",\n  \"appreciation\": \"...\",\n  \"correction_complete\": \"...\"\n}",
+            "threadId": "1"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "hqnk3utch65i2077c35wq3vq",
+        "position": {
+          "x": 1164.5209798528135,
+          "y": 1081.13878843538
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "google-drive-file",
+          "label": "Google Drive - File2",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "File operations for Google Drive (upload/download/delete/update)",
+          "showRunningStatus": true,
+          "parameters": {
+            "operation": "upload",
+            "mimeType": "text/plain",
+            "name": {
+              "$expr": "output",
+              "node": "Function12",
+              "outputId": "success",
+              "path": "titre"
+            },
+            "parents": [
+              "1s5obhuEzsiBPyrGX88PI_aYQw6-Pd4d9"
+            ],
+            "clientId": {
+              "$expr": "secret",
+              "path": "Client ID87"
+            },
+            "clientSecret": {
+              "$expr": "secret",
+              "path": "Client SecretGOC"
+            },
+            "refreshToken": {
+              "$expr": "secret",
+              "path": "Refresh Token1//04"
+            },
+            "contentBase64": {
+              "$expr": "output",
+              "node": "Function14",
+              "outputId": "success",
+              "path": "contentBase64"
+            }
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "qlvxei57jvz7vmuyr0o09glm",
+        "position": {
+          "x": 1046.730260014849,
+          "y": 1080.1934172093354
+        },
+        "type": "action",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "function",
+          "label": "Function14",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Executes custom JavaScript code on the input data.",
+          "showRunningStatus": true,
+          "parameters": {
+            "code": "const contenu = outputs.Function12.success.contenu;\nconst documentId = input.documentId;\n\nfunction utf8ToBase64(str) {\n  const utf8Bytes = [];\n  for (let i = 0; i < str.length; i++) {\n    let charcode = str.charCodeAt(i);\n    if (charcode < 0x80) {\n      utf8Bytes.push(charcode);\n    } else if (charcode < 0x800) {\n      utf8Bytes.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));\n    } else if (charcode < 0xd800 || charcode >= 0xe000) {\n      utf8Bytes.push(\n        0xe0 | (charcode >> 12),\n        0x80 | ((charcode >> 6) & 0x3f),\n        0x80 | (charcode & 0x3f)\n      );\n    } else {\n      // surrogate pair\n      i++;\n      charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));\n      utf8Bytes.push(\n        0xf0 | (charcode >> 18),\n        0x80 | ((charcode >> 12) & 0x3f),\n        0x80 | ((charcode >> 6) & 0x3f),\n        0x80 | (charcode & 0x3f)\n      );\n    }\n  }\n\n  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';\n  let result = '';\n  for (let i = 0; i < utf8Bytes.length; i += 3) {\n    const b1 = utf8Bytes[i];\n    const b2 = i + 1 < utf8Bytes.length ? utf8Bytes[i + 1] : NaN;\n    const b3 = i + 2 < utf8Bytes.length ? utf8Bytes[i + 2] : NaN;\n\n    result += chars[b1 >> 2];\n    result += chars[((b1 & 3) << 4) | (isNaN(b2) ? 0 : (b2 >> 4))];\n    result += isNaN(b2) ? '=' : chars[((b2 & 15) << 2) | (isNaN(b3) ? 0 : (b3 >> 6))];\n    result += isNaN(b3) ? '=' : chars[b3 & 63];\n  }\n  return result;\n}\n\nconst contentBase64 = utf8ToBase64(contenu);\n\nreturn {\n  documentId: documentId,\n  contentBase64: contentBase64\n};"
+          },
+          "_morphing": false
+        },
+        "selected": false
+      },
+      {
+        "id": "sbqxgi5grqjlku5y77sc20cg",
+        "position": {
+          "x": -812.9302491059541,
+          "y": 1088.8382072062043
+        },
+        "type": "trigger",
+        "width": 64,
+        "height": 64,
+        "data": {
+          "name": "manual-trigger",
+          "label": "Manual Trigger1",
+          "inputs": {},
+          "outputs": {
+            "success": {
+              "label": "Success"
+            },
+            "error": {
+              "label": "Error"
+            }
+          },
+          "description": "Triggers the workflow manually.",
+          "showRunningStatus": false,
+          "parameters": {},
+          "_morphing": false
+        }
+      },
+      {
+        "id": "lduzptqeoqpp5x4pvd2qxz4k",
+        "position": {
+          "x": -747.4781386279334,
+          "y": 1420.6511132419155
+        },
+        "type": "display",
+        "width": 256,
+        "height": 100,
+        "dragHandle": ".drag-handle__custom",
+        "data": {
+          "name": "log",
+          "label": "Log",
+          "inputs": {
+            "input": {
+              "label": "Input"
+            }
+          },
+          "outputs": {
+            "success": {
+              "label": "Success",
+              "isConnectable": false
+            }
+          },
+          "description": "Logs the input data to the console.",
+          "showRunningStatus": false,
+          "parameters": {},
+          "_morphing": false
+        },
+        "selected": false
+      }
+    ],
+    "connections": [
+      {
+        "source": "266ccbe4-ea94-41a0-8ff4-7e625b37831c",
+        "sourceHandle": "success",
+        "target": "f9770fee-2856-4588-b9a9-d6938d08f1ee",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__f3ihbuqz626y2z6q30yzqs35success-s68tizmx87biqixp2astdn5yinput",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "f9770fee-2856-4588-b9a9-d6938d08f1ee",
+        "sourceHandle": "success",
+        "target": "d002cedc-09fa-4f78-bfe3-0e50bb105afb",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__a8782140-db80-44be-a429-24ef716ffaa6success-b1a2c3d4-0001-4a11-9c22-attendcheck01input",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "9d530619-8ef6-496e-97f3-33e5423444fa",
+        "sourceHandle": "success",
+        "target": "70854288-3d50-4c02-b485-abcb35930269",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__yk39i2phqs5hsyawj14or047success-lsg2gy4d9iq721vcwuk31pxcinput",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "70854288-3d50-4c02-b485-abcb35930269",
+        "sourceHandle": "success",
+        "target": "b3699260-1b6c-4441-a3b7-78d619d2eef8",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__lsg2gy4d9iq721vcwuk31pxcsuccess-wre9ky9crv6cjklh8wu45jw4input",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "d002cedc-09fa-4f78-bfe3-0e50bb105afb",
+        "sourceHandle": "success",
+        "target": "9d530619-8ef6-496e-97f3-33e5423444fa",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__b1a2c3d4-0001-4a11-9c22-attendcheck01success-158695c4-2034-4da5-8271-e1f9c9e1d748input",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "xex0ze3ln6yqhg6cbj3xdl12",
+        "sourceHandle": "success",
+        "target": "nwvpy8z1vssekm5wk4qsz8dr",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "f83458emdfva6q9kz4zcgh00",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "xex0ze3ln6yqhg6cbj3xdl12",
+        "sourceHandle": "success",
+        "target": "ncs1rco4k7o862ugw2r1zccw",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "hsqqgmarss57zyc8uxxvhr7b",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "ncs1rco4k7o862ugw2r1zccw",
+        "sourceHandle": "success",
+        "target": "mu4t08xf4suwy9pf8ek0caih",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "fca3lvju50duqsfm6bcm6be8",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "eemt50wgawtehz8d1m2fqxqj",
+        "sourceHandle": "success",
+        "target": "r881u8i96btjs8zn5u0v5pjj",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "skrvrxwzgflrhsilej1roq2o",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "r881u8i96btjs8zn5u0v5pjj",
+        "sourceHandle": "success",
+        "target": "lejax2jwokqrno6h9u0sg4lx",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "ghk4cw0mm8lizg4aqyyb9821",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "xjg9i9mmma6677qv6bwjdxv2",
+        "sourceHandle": "success",
+        "target": "f1syjmxpr3ns0a0uus83gu7m",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "yw8af6rppne0h9df4skouqd2",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "uz8kqd2coui2m4cy69qteott",
+        "sourceHandle": "success",
+        "target": "f1syjmxpr3ns0a0uus83gu7m",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "rqroayp31aeagwfg29v6xcjl",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "f1syjmxpr3ns0a0uus83gu7m",
+        "sourceHandle": "success",
+        "target": "xex0ze3ln6yqhg6cbj3xdl12",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "w5gyccg4wo4u7aqe6ae5u2ok",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "f1syjmxpr3ns0a0uus83gu7m",
+        "sourceHandle": "success",
+        "target": "eemt50wgawtehz8d1m2fqxqj",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "la428s1alpbfcnzdfoxsj4r4",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "nwvpy8z1vssekm5wk4qsz8dr",
+        "sourceHandle": "success",
+        "target": "bjizh6e2lxebbpbjywpd7fit",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "pimrgjcv6mwmqkbh21nt97b7",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "nwvpy8z1vssekm5wk4qsz8dr",
+        "sourceHandle": "success",
+        "target": "swq9k5937qrr4wq03erzmfsx",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "lpgbfknlwo1o6lvtiij7oq3z",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "zo6rhlxnphk7ssqvucwgw02y",
+        "sourceHandle": "success",
+        "target": "aajylq1rmg54rl6s1zcrx5sa",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "jd3yu9yfbovym3i1v9ad5gcu",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "aajylq1rmg54rl6s1zcrx5sa",
+        "sourceHandle": "success",
+        "target": "fm3ydylikkmaj0og6gc5qkdg",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "nfq66hgp9zjw60vfdrzt27lr",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "fm3ydylikkmaj0og6gc5qkdg",
+        "sourceHandle": "success",
+        "target": "st109xg1bzdc0vwz8qnx5ia9",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "yh44d1raq3lnuohq9yiek4b6",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "lbfc6bi3dzzcxfg94abe6zp8",
+        "sourceHandle": "success",
+        "target": "uha9h259kejg3vkh1mfi367t",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "mi49u88ferz0xutaae2t412u",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "uha9h259kejg3vkh1mfi367t",
+        "sourceHandle": "success",
+        "target": "pydvavx2n37gpudhan6e9tyf",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xkw0yo8jmod5ospdbxxumv6s",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "pydvavx2n37gpudhan6e9tyf",
+        "sourceHandle": "success",
+        "target": "t14egdpujm6q38z44bgk37ph",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xrd4lw0cfwtmyxcm7f0v8vlw",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "st109xg1bzdc0vwz8qnx5ia9",
+        "sourceHandle": "success",
+        "target": "hptf7x8svt0ty5oetz4njz6c",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "ofwuktki0mxthi4nejc77fkw",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "t14egdpujm6q38z44bgk37ph",
+        "sourceHandle": "success",
+        "target": "jsfcc6th7073vbqbjozj9jlm",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "v6dqyghqodare7rn5a7qt11u",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "jsfcc6th7073vbqbjozj9jlm",
+        "sourceHandle": "success",
+        "target": "ol7l5oqtg5jzt2b25mydtrwb",
+        "targetHandle": "input2",
+        "type": "directed",
+        "id": "etzj04udq279kpee89d0f63o",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "ol7l5oqtg5jzt2b25mydtrwb",
+        "sourceHandle": "success",
+        "target": "wrppnq8sxio7oeivhxue2s70",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "wzdv4bs5n93frqswci42zk11",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "c8wd4pk4y21hdqko95xyr12f",
+        "sourceHandle": "success",
+        "target": "gm7aj3csiqrkou0qw46c3bmk",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "rltlp8fr2eva1sg5f58b6fty",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "hptf7x8svt0ty5oetz4njz6c",
+        "sourceHandle": "success",
+        "target": "ol7l5oqtg5jzt2b25mydtrwb",
+        "targetHandle": "input1",
+        "type": "directed",
+        "id": "ylquq4povv8xhbjwd2lbhpry",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "c8wd4pk4y21hdqko95xyr12f",
+        "sourceHandle": "success",
+        "target": "z0yuk1qjors4jmv7k5lr3png",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "iw67q5bz2rfztetciu4iab42",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "z0yuk1qjors4jmv7k5lr3png",
+        "sourceHandle": "success",
+        "target": "bco8i8257is66quvjm69379h",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "hhwczt53xmbzziyo4uhkmek7",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "bco8i8257is66quvjm69379h",
+        "sourceHandle": "success",
+        "target": "j5bq0dpeam0d5d6ynbkmsj6s",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "to9wy2r8v9clzcvhsx5wo5l9",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "j5bq0dpeam0d5d6ynbkmsj6s",
+        "sourceHandle": "success",
+        "target": "stjgtessk2gj1xxcvigkjdov",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "s2kwzokxd8jfgc7ca4frmp2t",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "ol7l5oqtg5jzt2b25mydtrwb",
+        "sourceHandle": "success",
+        "target": "r16ec8r0cysndv10p5xkp34i",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__ol7l5oqtg5jzt2b25mydtrwbsuccess-r16ec8r0cysndv10p5xkp34iinput",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "c3bk0yhc1zgqfogurkhqk6f0",
+        "sourceHandle": "llm",
+        "target": "r16ec8r0cysndv10p5xkp34i",
+        "targetHandle": "llm",
+        "type": "agentConnection",
+        "id": "xy-edge__c3bk0yhc1zgqfogurkhqk6f0llm-r16ec8r0cysndv10p5xkp34illm",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "r16ec8r0cysndv10p5xkp34i",
+        "sourceHandle": "success",
+        "target": "c8wd4pk4y21hdqko95xyr12f",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__r16ec8r0cysndv10p5xkp34isuccess-c8wd4pk4y21hdqko95xyr12finput",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "stjgtessk2gj1xxcvigkjdov",
+        "sourceHandle": "success",
+        "target": "qlvxei57jvz7vmuyr0o09glm",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__stjgtessk2gj1xxcvigkjdovsuccess-qlvxei57jvz7vmuyr0o09glminput",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "qlvxei57jvz7vmuyr0o09glm",
+        "sourceHandle": "success",
+        "target": "hqnk3utch65i2077c35wq3vq",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__qlvxei57jvz7vmuyr0o09glmsuccess-hqnk3utch65i2077c35wq3vqinput",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "sbqxgi5grqjlku5y77sc20cg",
+        "sourceHandle": "success",
+        "target": "zo6rhlxnphk7ssqvucwgw02y",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__sbqxgi5grqjlku5y77sc20cgsuccess-zo6rhlxnphk7ssqvucwgw02yinput",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "sbqxgi5grqjlku5y77sc20cg",
+        "sourceHandle": "success",
+        "target": "lbfc6bi3dzzcxfg94abe6zp8",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__sbqxgi5grqjlku5y77sc20cgsuccess-lbfc6bi3dzzcxfg94abe6zp8input",
+        "data": {
+          "isAnimated": false
+        }
+      },
+      {
+        "source": "minky4xtyo5eb85y5s94gmra",
+        "sourceHandle": "success",
+        "target": "lduzptqeoqpp5x4pvd2qxz4k",
+        "targetHandle": "input",
+        "type": "directed",
+        "id": "xy-edge__minky4xtyo5eb85y5s94gmrasuccess-lduzptqeoqpp5x4pvd2qxz4kinput",
+        "data": {
+          "isAnimated": false
+        }
+      }
+    ],
+    "status": "stopped",
+    "tracingEnabled": true,
+    "userId": "ad99372b-027b-4b28-9b70-e592fd083731",
+    "version": 1,
+    "createdAt": 1787508255350,
+    "updatedAt": 1787826255497,
+    "publishedNames": [],
+    "previousStatus": "running"
+  }
+]
