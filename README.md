@@ -1,7 +1,5 @@
 # Smart_School_RFID_Correction_Copies
 
-# Smart School - Fusion AI Academy
-
 ## 📖 À propos du projet
 **Smart School** est une application développée par **Fusion AI Academy** (une filiale de ABA Technology). 
 Ce projet vise à créer une plateforme centralisée pour automatiser le suivi administratif, gérer l'assiduité via un système RFID, et assister les professeurs dans la correction des examens grâce à l'Intelligence Artificielle. 
