@@ -1,0 +1,13 @@
+id,nom,prenom,note,note_max,pourcentage,erreurs,appreciation,correction_complete,created_at
+51,Sara,Amine,18,20,90,"Exercice 1, question 2 : 8 × 7 = 54 est incorrect, la bonne réponse est 56.","Bon travail dans l’ensemble, les calculs et la résolution d’équation sont corrects. Une petite erreur d’arithmétique sur la multiplication de l’exercice 1 a coûté un point, mais la maîtrise des notions est satisfaisante.","Exercice 1 :
+1. 25 + 17 = 42 ✔
+2. 8 × 7 = 56 ✘ (corrigé)
+3. 100 − 36 = 64 ✔
+4. 81 ÷ 9 = 9 ✔
+
+Exercice 2 :
+2x + 6 = 16 → 2x = 10 → x = 5 ✔
+
+Exercice 3 :
+Périmètre = 2 × (8 + 5) = 26 cm ✔
+Aire = 8 × 5 = 40 cm² ✔",2026-08-27 11:01:04.430879+00

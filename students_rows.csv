@@ -1,0 +1,4 @@
+id,student_code,first_name,last_name,class_id,rfid_uid,is_active,created_at,updated_at
+1d5317b6-34dc-4d5b-89f8-cca0cca705d8,STU002,Sara,Bennani,1f436aa1-c177-4192-b9bc-1c2b4b2fb0f2,6032395B,true,2026-08-18 10:26:04.03446+00,2026-08-24 12:15:08.092763+00
+45ba3e03-5d67-4d5f-8a2f-214bea59956d,STU003,Youssef,Idrissi,cd6ce548-39e5-466b-8ecb-05fcb6d01dac,83CFDB2B,true,2026-08-18 10:26:04.03446+00,2026-08-23 18:10:23.954683+00
+f3f39ca3-1bd7-4987-877f-737dad58ffe0,STU001,Ahmed,Alami,1f436aa1-c177-4192-b9bc-1c2b4b2fb0f2,32D934B3,true,2026-08-18 10:26:04.03446+00,2026-08-23 18:10:53.466431+00

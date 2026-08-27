@@ -1,0 +1,2 @@
+id,student_id,alert_type,alert_date,message,status,created_at
+93fd0f87-090e-4adc-aa96-de83e6fe576b,f3f39ca3-1bd7-4987-877f-737dad58ffe0,absence,2026-08-27,Absence détectée : Ahmed Alami (STU001),open,2026-08-27 10:43:54.140861+00
