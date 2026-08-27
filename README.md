@@ -1,1 +1,0 @@
-# Smart_School_RFID_Correction_Copies
